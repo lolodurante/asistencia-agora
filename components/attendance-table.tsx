@@ -153,22 +153,22 @@ export default function AttendanceTable({
   }
 
   const getSessionLabel = (session: Session) => {
-    return `Parte ${session.part} - ${session.name || "Sin nombre"}`
+    return `Encuentro ${session.number} - ${session.name || "Sin nombre"}`
   }
 
   const selectedSessionData = selectedSession ? sessions.find((s) => s.id === selectedSession) : null
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Tomar Asistencia</CardTitle>
-          <CardDescription>
+      <Card className="shadow-md">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl">Asistencia</CardTitle>
+          <CardDescription className="mt-1">
             Selecciona un encuentro existente o crea uno nuevo para registrar la asistencia
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 mb-6">
+        <CardContent className="pt-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
             <div className="flex-1">
               <Select value={selectedSession || ""} onValueChange={setSelectedSession}>
                 <SelectTrigger>
@@ -183,7 +183,7 @@ export default function AttendanceTable({
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleCreateNewSession} disabled={sessions.length >= totalSessions}>
+            <Button onClick={handleCreateNewSession} disabled={sessions.length >= totalSessions} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" /> Nuevo Encuentro
             </Button>
           </div>
@@ -194,64 +194,66 @@ export default function AttendanceTable({
                 {selectedSessionData.part === 1 ? "Primera Parte" : "Segunda Parte"}
               </Badge>
               <h3 className="text-lg font-medium">
-                Encuentro {selectedSessionData.name}
+                Encuentro {selectedSessionData.number} - {selectedSessionData.name}
               </h3>
             </div>
           )}
 
           {selectedSession ? (
             students.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>agorense</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {students.map((student) => {
-                    const status = getAttendanceStatus(student.id)
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[150px]">agorense</TableHead>
+                      <TableHead className="min-w-[100px]">Estado</TableHead>
+                      <TableHead className="min-w-[150px]">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {students.map((student) => {
+                      const status = getAttendanceStatus(student.id)
 
-                    return (
-                      <TableRow key={student.id}>
-                        <TableCell>{student.name}</TableCell>
-                        <TableCell>
-                          {status === "PRESENT" && <Badge className="bg-green-500">Presente</Badge>}
-                          {status === "ABSENT" && <Badge className="bg-red-500">Ausente</Badge>}
-                          {status === "JUSTIFIED" && <Badge className="bg-yellow-500">Justificado</Badge>}
-                          {!status && <Badge variant="outline">Sin registrar</Badge>}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant={status === "PRESENT" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "PRESENT")}
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant={status === "ABSENT" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "ABSENT")}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant={status === "JUSTIFIED" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "JUSTIFIED")}
-                            >
-                              <AlertCircle className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                      return (
+                        <TableRow key={student.id}>
+                          <TableCell className="font-medium">{student.name}</TableCell>
+                          <TableCell>
+                            {status === "PRESENT" && <Badge className="bg-green-500">Presente</Badge>}
+                            {status === "ABSENT" && <Badge className="bg-red-500">Ausente</Badge>}
+                            {status === "JUSTIFIED" && <Badge className="bg-yellow-500">Justificado</Badge>}
+                            {!status && <Badge variant="outline">Sin registrar</Badge>}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                size="sm"
+                                variant={status === "PRESENT" ? "default" : "outline"}
+                                onClick={() => handleAttendanceChange(student.id, "PRESENT")}
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant={status === "ABSENT" ? "default" : "outline"}
+                                onClick={() => handleAttendanceChange(student.id, "ABSENT")}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant={status === "JUSTIFIED" ? "default" : "outline"}
+                                onClick={() => handleAttendanceChange(student.id, "JUSTIFIED")}
+                              >
+                                <AlertCircle className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No hay agorenses registrados.</p>
@@ -287,11 +289,11 @@ export default function AttendanceTable({
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewSessionDialog(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowNewSessionDialog(false)} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={handleConfirmNewSession}>Crear</Button>
+            <Button onClick={handleConfirmNewSession} className="w-full sm:w-auto">Crear</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -315,11 +317,11 @@ export default function AttendanceTable({
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowJustificationDialog(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowJustificationDialog(false)} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={handleJustificationSubmit}>Guardar</Button>
+            <Button onClick={handleJustificationSubmit} className="w-full sm:w-auto">Guardar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

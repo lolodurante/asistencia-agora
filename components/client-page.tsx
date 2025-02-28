@@ -34,11 +34,11 @@ export default function ClientPage({
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(initialAttendance)
 
   return (
-    <main className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">Asistencia</h1>
+    <main className="container mx-auto px-4 py-4">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Asistencia</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 mb-12">
           <TabsTrigger value="attendance">Tomar Asistencia</TabsTrigger>
           <TabsTrigger value="excel">Vista General</TabsTrigger>
           <TabsTrigger value="students">agorenses</TabsTrigger>
