@@ -126,7 +126,8 @@ export default function AttendanceTable({
       const updatedRecord = await updateAttendance({
         studentId: selectedStudent,
         sessionId: selectedSession,
-        status: "JUSTIFIED"
+        status: "JUSTIFIED",
+        justification: justificationText.trim()
       })
 
       setAttendance((prev) => {

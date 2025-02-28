@@ -53,6 +53,7 @@ export async function updateAttendance(data: {
   studentId: string
   sessionId: string
   status: AttendanceStatus
+  justification?: string
 }) {
   const attendance = await prisma.attendanceRecord.upsert({
     where: {
@@ -62,12 +63,14 @@ export async function updateAttendance(data: {
       }
     },
     update: {
-      status: data.status
+      status: data.status,
+      justification: data.justification
     },
     create: {
       studentId: data.studentId,
       sessionId: data.sessionId,
-      status: data.status
+      status: data.status,
+      justification: data.justification
     }
   })
   revalidatePath('/')
