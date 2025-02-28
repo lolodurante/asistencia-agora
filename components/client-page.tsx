@@ -34,7 +34,7 @@ export default function ClientPage({
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="attendance">Tomar Asistencia</TabsTrigger>
           <TabsTrigger value="excel">Vista General</TabsTrigger>
-          <TabsTrigger value="students">Estudiantes</TabsTrigger>
+          <TabsTrigger value="students">agorenses</TabsTrigger>
           <TabsTrigger value="settings">Configuración</TabsTrigger>
         </TabsList>
 

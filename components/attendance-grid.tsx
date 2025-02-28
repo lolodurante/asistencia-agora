@@ -92,14 +92,14 @@ export default function AttendanceGrid({ students, sessions, attendance, attenda
       <Card>
         <CardHeader>
           <CardTitle>Grilla de Asistencia</CardTitle>
-          <CardDescription>Vista general de asistencias por estudiante y encuentro</CardDescription>
+          <CardDescription>Vista general de asistencias por agorense y encuentro</CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="bg-background sticky left-0 w-[200px]">Estudiante</TableHead>
+                  <TableHead className="bg-background sticky left-0 w-[200px]">agorense</TableHead>
                   {sortedSessions.map((session) => (
                     <TableHead key={session.id} className="text-center min-w-[60px]">
                       <div className="text-xs font-medium">E{session.number}</div>

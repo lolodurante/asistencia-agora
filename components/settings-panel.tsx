@@ -115,7 +115,7 @@ export default function SettingsPanel({
                 />
               </div>
               <p className="text-sm text-muted-foreground">
-                Los estudiantes deben alcanzar este porcentaje en cada parte para aprobar.
+                Los agorenses deben alcanzar este porcentaje en cada parte para aprobar.
               </p>
             </div>
 
@@ -155,7 +155,7 @@ export default function SettingsPanel({
                 <AlertDialogHeader>
                   <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Esta acción eliminará permanentemente todos los datos: estudiantes, encuentros y registros de
+                    Esta acción eliminará permanentemente todos los datos: agorenses, encuentros y registros de
                     asistencia. Esta acción no se puede deshacer.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

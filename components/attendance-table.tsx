@@ -203,7 +203,7 @@ export default function AttendanceTable({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Estudiante</TableHead>
+                    <TableHead>agorense</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
@@ -253,9 +253,9 @@ export default function AttendanceTable({
               </Table>
             ) : (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">No hay estudiantes registrados.</p>
+                <p className="text-muted-foreground">No hay agorenses registrados.</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Agrega estudiantes en la pestaña "Estudiantes" para poder tomar asistencia.
+                  Agrega agorenses en la pestaña "agorenses" para poder tomar asistencia.
                 </p>
               </div>
             )
@@ -272,7 +272,7 @@ export default function AttendanceTable({
           <DialogHeader>
             <DialogTitle>Nuevo Encuentro</DialogTitle>
             <DialogDescription>
-              Crea un nuevo encuentro para registrar la asistencia de los estudiantes
+              Crea un nuevo encuentro para registrar la asistencia de los agorenses
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -300,7 +300,7 @@ export default function AttendanceTable({
           <DialogHeader>
             <DialogTitle>Justificar Inasistencia</DialogTitle>
             <DialogDescription>
-              Ingresa el motivo de la inasistencia del estudiante
+              Ingresa el motivo de la inasistencia del agorense
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

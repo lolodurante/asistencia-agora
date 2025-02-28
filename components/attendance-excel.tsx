@@ -65,7 +65,7 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
 
   const exportToCSV = () => {
     // Crear encabezados
-    const headers = ["Estudiante"]
+    const headers = ["agorense"]
     sortedSessions.forEach((session) => {
       headers.push(`Encuentro ${session.number}`)
     })
@@ -136,7 +136,7 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="bg-background sticky left-0 min-w-[200px]">Estudiante</TableHead>
+                  <TableHead className="bg-background sticky left-0 min-w-[200px]">agorense</TableHead>
                   {sortedSessions.map((session) => (
                     <TableHead key={session.id} className="text-center min-w-[150px]">
                       <div className="font-bold">Encuentro {session.number}</div>

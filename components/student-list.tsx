@@ -117,13 +117,13 @@ export default function StudentList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Estudiantes</CardTitle>
-        <CardDescription>Administra la lista de estudiantes y visualiza su asistencia</CardDescription>
+        <CardTitle>agorenses</CardTitle>
+        <CardDescription>Administra la lista de agorenses y visualiza su asistencia</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4 mb-6">
           <Input
-            placeholder="Nombre del estudiante"
+            placeholder="Nombre del agorense"
             value={newStudentName}
             onChange={(e) => setNewStudentName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addStudent()}
@@ -197,7 +197,7 @@ export default function StudentList({
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Eliminar estudiante</DialogTitle>
+                              <DialogTitle>Eliminar agorense</DialogTitle>
                               <DialogDescription>
                                 ¿Estás seguro que deseas eliminar a {student.name}? Esta acción no se puede deshacer.
                               </DialogDescription>
@@ -227,8 +227,8 @@ export default function StudentList({
           </Table>
         ) : (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No hay estudiantes registrados.</p>
-            <p className="text-sm text-muted-foreground mt-1">Agrega estudiantes usando el formulario de arriba.</p>
+            <p className="text-muted-foreground">No hay agorenses registrados.</p>
+            <p className="text-sm text-muted-foreground mt-1">Agrega agorenses usando el formulario de arriba.</p>
           </div>
         )}
       </CardContent>
@@ -238,7 +238,7 @@ export default function StudentList({
           <DialogHeader>
             <DialogTitle>Justificaciones de {selectedStudent?.name}</DialogTitle>
             <DialogDescription>
-              Lista de justificaciones presentadas por el estudiante
+              Lista de justificaciones presentadas por el agorense
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">

@@ -153,7 +153,7 @@ export default function AttendanceBySession({ students, sessions, attendance }: 
           <div className="grid grid-cols-4 gap-4 mb-6">
             <Card>
               <CardHeader className="p-4">
-                <CardDescription>Total Estudiantes</CardDescription>
+                <CardDescription>Total agorenses</CardDescription>
                 <CardTitle>{stats.total}</CardTitle>
               </CardHeader>
             </Card>
@@ -181,7 +181,7 @@ export default function AttendanceBySession({ students, sessions, attendance }: 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Estudiante</TableHead>
+                  <TableHead>agorense</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
