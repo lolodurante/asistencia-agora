@@ -1,16 +1,17 @@
 'use server'
 
-import { prisma } from './db'
 import { revalidatePath } from 'next/cache'
+import { prisma } from './db'
+import type { AttendanceStatus } from '@prisma/client'
 
 export async function getStudents() {
-  return await prisma.student.findMany({
+  return prisma.student.findMany({
     orderBy: { name: 'asc' }
   })
 }
 
 export async function getSessions() {
-  return await prisma.session.findMany({
+  return prisma.session.findMany({
     orderBy: [
       { date: 'asc' },
       { part: 'asc' }
@@ -19,7 +20,7 @@ export async function getSessions() {
 }
 
 export async function getAttendance() {
-  return await prisma.attendanceRecord.findMany({
+  return prisma.attendanceRecord.findMany({
     include: {
       student: true,
       session: true
@@ -51,7 +52,7 @@ export async function createSession(data: {
 export async function updateAttendance(data: {
   studentId: string
   sessionId: string
-  status: 'PRESENT' | 'ABSENT' | 'JUSTIFIED'
+  status: AttendanceStatus
 }) {
   const attendance = await prisma.attendanceRecord.upsert({
     where: {

@@ -13,26 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
-
-interface Student {
-  id: string
-  name: string
-}
-
-interface Session {
-  id: string
-  date: string
-  part: 1 | 2
-  number: number
-  name: string
-}
-
-interface AttendanceRecord {
-  studentId: string
-  sessionId: string
-  status: "present" | "absent" | "justified"
-  justification?: string
-}
+import type { Student, Session, AttendanceRecord, AttendanceStatus } from '@prisma/client'
 
 interface AttendanceExcelProps {
   students: Student[]
@@ -43,6 +24,7 @@ interface AttendanceExcelProps {
 
 export default function AttendanceExcel({ students, sessions, attendance, attendanceThreshold }: AttendanceExcelProps) {
   const [showJustification, setShowJustification] = useState(false)
+  console.log(attendanceThreshold)
   const [selectedJustification, setSelectedJustification] = useState("")
 
   // Ordenar las sesiones por número
@@ -56,14 +38,14 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
     if (!status) return <span className="text-muted-foreground">-</span>
 
     const statusMap = {
-      present: { text: "Presente", class: "text-green-500" },
-      absent: { text: "Ausente", class: "text-red-500" },
-      justified: { text: "Justificado", class: "text-yellow-500 cursor-pointer hover:underline" },
+      PRESENT: { text: "Presente", class: "text-green-500" },
+      ABSENT: { text: "Ausente", class: "text-red-500" },
+      JUSTIFIED: { text: "Justificado", class: "text-yellow-500 cursor-pointer hover:underline" },
     }
 
     const statusInfo = statusMap[status.status]
 
-    if (status.status === "justified" && status.justification) {
+    if (status.status === "JUSTIFIED" && status.justification) {
       return (
         <span
           className={statusInfo.class}
@@ -93,10 +75,10 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
       const row = [student.name]
       sortedSessions.forEach((session) => {
         const status = getAttendanceStatus(student.id, session.id)
-        const statusMap = {
-          present: "Presente",
-          absent: "Ausente",
-          justified: "Justificado",
+        const statusMap: Record<AttendanceStatus, string> = {
+          PRESENT: "Presente",
+          ABSENT: "Ausente",
+          JUSTIFIED: "Justificado",
         }
         row.push(status ? statusMap[status.status] : "-")
       })

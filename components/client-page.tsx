@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import AttendanceTable from "@/components/attendance-table"
-import StudentList from "@/components/student-list"
-import SettingsPanel from "@/components/settings-panel"
-import AttendanceExcel from "@/components/attendance-excel"
-import { Student, Session, AttendanceRecord } from "@prisma/client"
+import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import AttendanceTable from '@/components/attendance-table'
+import StudentList from '@/components/student-list'
+import SettingsPanel from '@/components/settings-panel'
+import AttendanceExcel from '@/components/attendance-excel'
+import type { Student, Session, AttendanceRecord } from '@prisma/client'
 
-type Props = {
+interface Props {
   initialStudents: Student[]
   initialSessions: Session[]
   initialAttendance: AttendanceRecord[]
@@ -19,10 +19,10 @@ export default function ClientPage({
   initialSessions,
   initialAttendance,
 }: Props) {
-  const [activeTab, setActiveTab] = useState("attendance")
-  const [students, setStudents] = useState(initialStudents)
-  const [sessions, setSessions] = useState(initialSessions)
-  const [attendance, setAttendance] = useState(initialAttendance)
+  const [activeTab, setActiveTab] = useState('attendance')
+  const [students, setStudents] = useState<Student[]>(initialStudents)
+  const [sessions, setSessions] = useState<Session[]>(initialSessions)
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>(initialAttendance)
   const [totalSessions, setTotalSessions] = useState(14)
   const [attendanceThreshold, setAttendanceThreshold] = useState(60)
 

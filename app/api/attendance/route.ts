@@ -11,6 +11,7 @@ export async function GET() {
     })
     return NextResponse.json(attendance)
   } catch (error) {
+    console.error('Error fetching attendance records:', error)
     return NextResponse.json({ error: 'Error fetching attendance records' }, { status: 500 })
   }
 }
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
     })
     return NextResponse.json(attendance)
   } catch (error) {
+    console.error('Error creating attendance record:', error)
     return NextResponse.json({ error: 'Error creating attendance record' }, { status: 500 })
   }
 }
@@ -55,6 +57,7 @@ export async function PUT(request: Request) {
     })
     return NextResponse.json(attendance)
   } catch (error) {
+    console.error('Error updating attendance record:', error)
     return NextResponse.json({ error: 'Error updating attendance record' }, { status: 500 })
   }
 }
@@ -79,6 +82,7 @@ export async function DELETE(request: Request) {
     })
     return NextResponse.json({ success: true })
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: 'Error deleting attendance record' }, { status: 500 })
   }
 } 

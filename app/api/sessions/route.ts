@@ -11,6 +11,7 @@ export async function GET() {
     })
     return NextResponse.json(sessions)
   } catch (error) {
+    console.error('Error fetching sessions:', error)
     return NextResponse.json({ error: 'Error fetching sessions' }, { status: 500 })
   }
 }
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
     })
     return NextResponse.json(session)
   } catch (error) {
+    console.error('Error creating session:', error)
     return NextResponse.json({ error: 'Error creating session' }, { status: 500 })
   }
 }
@@ -44,6 +46,7 @@ export async function DELETE(request: Request) {
     })
     return NextResponse.json({ success: true })
   } catch (error) {
+    console.error('Error deleting session:', error)
     return NextResponse.json({ error: 'Error deleting session' }, { status: 500 })
   }
 } 

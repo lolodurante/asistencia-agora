@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { createStudent, deleteStudent } from "@/lib/actions"
-import { Student, Session, AttendanceRecord } from "@prisma/client"
+import type { Student, Session, AttendanceRecord } from "@prisma/client"
 
 interface StudentListProps {
   students: Student[]
@@ -35,7 +35,6 @@ export default function StudentList({
   setStudents,
   sessions,
   attendance,
-  totalSessions,
   attendanceThreshold,
 }: StudentListProps) {
   const [newStudentName, setNewStudentName] = useState("")
@@ -102,13 +101,18 @@ export default function StudentList({
         const session = sessions.find((s) => s.id === record.sessionId)
         return {
           session,
-          justification: record.justification,
+          justification: record.justification ?? "",
         }
       })
   }
 
   const selectedStudent = students.find((s) => s.id === selectedStudentId)
   const justifications = selectedStudentId ? getJustifications(selectedStudentId) : []
+
+  const handleCloseDialog = () => {
+    const closeButton = document.querySelector("[data-radix-dialog-close]") as HTMLButtonElement | null
+    closeButton?.click()
+  }
 
   return (
     <Card>
@@ -199,17 +203,14 @@ export default function StudentList({
                               </DialogDescription>
                             </DialogHeader>
                             <DialogFooter>
-                              <Button
-                                variant="outline"
-                                onClick={() => document.querySelector("[data-radix-dialog-close]")?.click()}
-                              >
+                              <Button variant="outline" onClick={handleCloseDialog}>
                                 Cancelar
                               </Button>
                               <Button
                                 variant="destructive"
                                 onClick={async () => {
                                   await removeStudent(student.id)
-                                  document.querySelector("[data-radix-dialog-close]")?.click()
+                                  handleCloseDialog()
                                 }}
                               >
                                 Eliminar
