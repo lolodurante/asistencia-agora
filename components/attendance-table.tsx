@@ -19,28 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-
-interface Student {
-  id: string
-  name: string
-}
-
-interface Session {
-  id: string
-  date: string
-  part: 1 | 2
-  number: number
-  name: string
-}
-
-type AttendanceStatus = "present" | "absent" | "justified"
-
-interface AttendanceRecord {
-  studentId: string
-  sessionId: string
-  status: AttendanceStatus
-  justification?: string
-}
+import { createSession, updateAttendance } from "@/lib/actions"
+import { Student, Session, AttendanceRecord } from "@prisma/client"
 
 interface AttendanceTableProps {
   students: Student[]
@@ -72,9 +52,7 @@ export default function AttendanceTable({
       return { number: 1, part: 1 as const }
     }
 
-    const firstPartSessions = Number.parseInt(
-      localStorage.getItem("firstPartSessions") || Math.ceil(totalSessions / 2).toString(),
-    )
+    const firstPartSessions = Math.ceil(totalSessions / 2)
     const currentCount = sessions.length
 
     if (currentCount < firstPartSessions) {
@@ -91,75 +69,81 @@ export default function AttendanceTable({
     setShowNewSessionDialog(true)
   }
 
-  const handleConfirmNewSession = () => {
+  const handleConfirmNewSession = async () => {
     if (!newSessionName.trim()) return
 
     const { number, part } = getNextSessionInfo()
-    const newSession = {
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      part,
-      number,
-      name: newSessionName.trim(),
-    }
+    try {
+      const newSession = await createSession({
+        date: new Date(),
+        part,
+        number,
+        name: newSessionName.trim()
+      })
 
-    setSessions((prev) => [...prev, newSession])
-    setSelectedSession(newSession.id)
-    setNewSessionName("")
-    setShowNewSessionDialog(false)
+      setSessions((prev) => [...prev, newSession])
+      setSelectedSession(newSession.id)
+      setNewSessionName("")
+      setShowNewSessionDialog(false)
+    } catch (error) {
+      console.error("Error creating session:", error)
+    }
   }
 
-  const handleAttendanceChange = (studentId: string, status: AttendanceStatus) => {
+  const handleAttendanceChange = async (studentId: string, status: "PRESENT" | "ABSENT" | "JUSTIFIED") => {
     if (!selectedSession) return
 
-    if (status === "justified") {
+    if (status === "JUSTIFIED") {
       setSelectedStudent(studentId)
       setJustificationText("")
       setShowJustificationDialog(true)
       return
     }
 
-    setAttendance((prev) => {
-      const filtered = prev.filter(
-        (record) => !(record.studentId === studentId && record.sessionId === selectedSession),
-      )
+    try {
+      const updatedRecord = await updateAttendance({
+        studentId,
+        sessionId: selectedSession,
+        status
+      })
 
-      return [
-        ...filtered,
-        {
-          studentId,
-          sessionId: selectedSession,
-          status,
-        },
-      ]
-    })
+      setAttendance((prev) => {
+        const filtered = prev.filter(
+          (record) => !(record.studentId === studentId && record.sessionId === selectedSession),
+        )
+        return [...filtered, updatedRecord]
+      })
+    } catch (error) {
+      console.error("Error updating attendance:", error)
+    }
   }
 
-  const handleJustificationSubmit = () => {
+  const handleJustificationSubmit = async () => {
     if (!selectedSession || !selectedStudent || !justificationText.trim()) return
 
-    setAttendance((prev) => {
-      const filtered = prev.filter(
-        (record) => !(record.studentId === selectedStudent && record.sessionId === selectedSession),
-      )
+    try {
+      const updatedRecord = await updateAttendance({
+        studentId: selectedStudent,
+        sessionId: selectedSession,
+        status: "JUSTIFIED"
+      })
 
-      return [
-        ...filtered,
-        {
-          studentId: selectedStudent,
-          sessionId: selectedSession,
-          status: "justified",
-          justification: justificationText.trim(),
-        },
-      ]
-    })
+      setAttendance((prev) => {
+        const filtered = prev.filter(
+          (record) => !(record.studentId === selectedStudent && record.sessionId === selectedSession),
+        )
+        return [...filtered, updatedRecord]
+      })
 
-    setShowJustificationDialog(false)
-    setSelectedStudent(null)
-    setJustificationText("")
+      setShowJustificationDialog(false)
+      setSelectedStudent(null)
+      setJustificationText("")
+    } catch (error) {
+      console.error("Error updating attendance with justification:", error)
+    }
   }
 
-  const getAttendanceStatus = (studentId: string): AttendanceStatus | null => {
+  const getAttendanceStatus = (studentId: string): "PRESENT" | "ABSENT" | "JUSTIFIED" | null => {
     if (!selectedSession) return null
 
     const record = attendance.find((record) => record.studentId === studentId && record.sessionId === selectedSession)
@@ -232,31 +216,31 @@ export default function AttendanceTable({
                       <TableRow key={student.id}>
                         <TableCell>{student.name}</TableCell>
                         <TableCell>
-                          {status === "present" && <Badge className="bg-green-500">Presente</Badge>}
-                          {status === "absent" && <Badge className="bg-red-500">Ausente</Badge>}
-                          {status === "justified" && <Badge className="bg-yellow-500">Justificado</Badge>}
+                          {status === "PRESENT" && <Badge className="bg-green-500">Presente</Badge>}
+                          {status === "ABSENT" && <Badge className="bg-red-500">Ausente</Badge>}
+                          {status === "JUSTIFIED" && <Badge className="bg-yellow-500">Justificado</Badge>}
                           {!status && <Badge variant="outline">Sin registrar</Badge>}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              variant={status === "present" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "present")}
+                              variant={status === "PRESENT" ? "default" : "outline"}
+                              onClick={() => handleAttendanceChange(student.id, "PRESENT")}
                             >
                               <Check className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant={status === "absent" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "absent")}
+                              variant={status === "ABSENT" ? "default" : "outline"}
+                              onClick={() => handleAttendanceChange(student.id, "ABSENT")}
                             >
                               <X className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant={status === "justified" ? "default" : "outline"}
-                              onClick={() => handleAttendanceChange(student.id, "justified")}
+                              variant={status === "JUSTIFIED" ? "default" : "outline"}
+                              onClick={() => handleAttendanceChange(student.id, "JUSTIFIED")}
                             >
                               <AlertCircle className="h-4 w-4" />
                             </Button>
@@ -271,13 +255,13 @@ export default function AttendanceTable({
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No hay estudiantes registrados.</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Agrega estudiantes en la pestaña &quot;Estudiantes&quot;.
+                  Agrega estudiantes en la pestaña "Estudiantes" para poder tomar asistencia.
                 </p>
               </div>
             )
           ) : (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">Selecciona un encuentro o crea uno nuevo para tomar asistencia.</p>
+              <p className="text-muted-foreground">Selecciona un encuentro para tomar asistencia.</p>
             </div>
           )}
         </CardContent>
@@ -287,21 +271,18 @@ export default function AttendanceTable({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nuevo Encuentro</DialogTitle>
-            <DialogDescription>Ingresa un nombre para el nuevo encuentro</DialogDescription>
+            <DialogDescription>
+              Crea un nuevo encuentro para registrar la asistencia de los estudiantes
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="sessionName">Nombre del encuentro</Label>
+              <Label htmlFor="name">Nombre del encuentro</Label>
               <Input
-                id="sessionName"
-                placeholder="Ej: Clase Teórica 1"
+                id="name"
+                placeholder="Ej: Introducción a React"
                 value={newSessionName}
                 onChange={(e) => setNewSessionName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && newSessionName.trim()) {
-                    handleConfirmNewSession()
-                  }
-                }}
               />
             </div>
           </div>
@@ -309,9 +290,7 @@ export default function AttendanceTable({
             <Button variant="outline" onClick={() => setShowNewSessionDialog(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirmNewSession} disabled={!newSessionName.trim()}>
-              Crear
-            </Button>
+            <Button onClick={handleConfirmNewSession}>Crear</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -319,15 +298,17 @@ export default function AttendanceTable({
       <Dialog open={showJustificationDialog} onOpenChange={setShowJustificationDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Justificación de Falta</DialogTitle>
-            <DialogDescription>Ingresa el motivo de la falta justificada</DialogDescription>
+            <DialogTitle>Justificar Inasistencia</DialogTitle>
+            <DialogDescription>
+              Ingresa el motivo de la inasistencia del estudiante
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="justification">Motivo</Label>
+              <Label htmlFor="justification">Justificación</Label>
               <Textarea
                 id="justification"
-                placeholder="Ingresa el motivo de la justificación..."
+                placeholder="Ingresa el motivo de la inasistencia..."
                 value={justificationText}
                 onChange={(e) => setJustificationText(e.target.value)}
               />
@@ -337,9 +318,7 @@ export default function AttendanceTable({
             <Button variant="outline" onClick={() => setShowJustificationDialog(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleJustificationSubmit} disabled={!justificationText.trim()}>
-              Guardar Justificación
-            </Button>
+            <Button onClick={handleJustificationSubmit}>Guardar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

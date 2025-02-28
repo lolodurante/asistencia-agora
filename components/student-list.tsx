@@ -18,25 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
-interface Student {
-  id: string
-  name: string
-}
-
-interface Session {
-  id: string
-  part: 1 | 2
-  number: number
-  name: string
-}
-
-interface AttendanceRecord {
-  studentId: string
-  sessionId: string
-  status: "present" | "absent" | "justified"
-  justification?: string
-}
+import { createStudent, deleteStudent } from "@/lib/actions"
+import { Student, Session, AttendanceRecord } from "@prisma/client"
 
 interface StudentListProps {
   students: Student[]
@@ -59,20 +42,25 @@ export default function StudentList({
   const [showJustificationsDialog, setShowJustificationsDialog] = useState(false)
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null)
 
-  const addStudent = () => {
+  const addStudent = async () => {
     if (!newStudentName.trim()) return
 
-    const newStudent = {
-      id: Date.now().toString(),
-      name: newStudentName.trim(),
+    try {
+      const newStudent = await createStudent(newStudentName.trim())
+      setStudents((prev) => [...prev, newStudent])
+      setNewStudentName("")
+    } catch (error) {
+      console.error("Error adding student:", error)
     }
-
-    setStudents((prev) => [...prev, newStudent])
-    setNewStudentName("")
   }
 
-  const removeStudent = (id: string) => {
-    setStudents((prev) => prev.filter((student) => student.id !== id))
+  const removeStudent = async (id: string) => {
+    try {
+      await deleteStudent(id)
+      setStudents((prev) => prev.filter((student) => student.id !== id))
+    } catch (error) {
+      console.error("Error removing student:", error)
+    }
   }
 
   const calculateAttendancePercentage = (studentId: string, part: 1 | 2): number => {
@@ -82,7 +70,7 @@ export default function StudentList({
     const presentCount = partSessions.reduce((count, session) => {
       const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id)
 
-      return count + (record && (record.status === "present" || record.status === "justified") ? 1 : 0)
+      return count + (record && (record.status === "PRESENT" || record.status === "JUSTIFIED") ? 1 : 0)
     }, 0)
 
     return Math.round((presentCount / partSessions.length) * 100)
@@ -109,7 +97,7 @@ export default function StudentList({
 
   const getJustifications = (studentId: string) => {
     return attendance
-      .filter((record) => record.studentId === studentId && record.status === "justified")
+      .filter((record) => record.studentId === studentId && record.status === "JUSTIFIED")
       .map((record) => {
         const session = sessions.find((s) => s.id === record.sessionId)
         return {
@@ -219,8 +207,8 @@ export default function StudentList({
                               </Button>
                               <Button
                                 variant="destructive"
-                                onClick={() => {
-                                  removeStudent(student.id)
+                                onClick={async () => {
+                                  await removeStudent(student.id)
                                   document.querySelector("[data-radix-dialog-close]")?.click()
                                 }}
                               >
@@ -248,14 +236,16 @@ export default function StudentList({
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Justificaciones de {selectedStudent?.name}</DialogTitle>
-            <DialogDescription>Historial de faltas justificadas</DialogDescription>
+            <DialogDescription>
+              Lista de justificaciones presentadas por el estudiante
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             {justifications.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Encuentro</TableHead>
+                    <TableHead>Sesión</TableHead>
                     <TableHead>Justificación</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -263,7 +253,7 @@ export default function StudentList({
                   {justifications.map(({ session, justification }) => (
                     <TableRow key={session?.id}>
                       <TableCell>
-                        {session ? `${session.name} (Parte ${session.part})` : "Encuentro no encontrado"}
+                        {session?.name || `Sesión ${session?.number}`} (Parte {session?.part})
                       </TableCell>
                       <TableCell>{justification}</TableCell>
                     </TableRow>
@@ -271,12 +261,9 @@ export default function StudentList({
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-center text-muted-foreground py-4">No hay justificaciones registradas</p>
+              <p className="text-center text-muted-foreground py-4">No hay justificaciones registradas.</p>
             )}
           </div>
-          <DialogFooter>
-            <Button onClick={() => setShowJustificationsDialog(false)}>Cerrar</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </Card>
