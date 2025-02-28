@@ -137,7 +137,6 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
                   <TableHead className="bg-background sticky left-0 min-w-[200px]">agorense</TableHead>
                   {sortedSessions.map((session) => (
                     <TableHead key={session.id} className="text-center min-w-[150px]">
-                      <div className="font-bold">Encuentro {session.number}</div>
                       <div className="text-xs text-muted-foreground">{session.name}</div>
                       <div className="text-xs text-muted-foreground">Parte {session.part}</div>
                     </TableHead>

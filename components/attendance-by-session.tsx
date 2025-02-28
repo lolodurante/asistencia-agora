@@ -135,7 +135,6 @@ export default function AttendanceBySession({ students, sessions, attendance }: 
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <div className="w-[180px] text-center">
-                <div className="font-medium">Encuentro {currentSession?.number}</div>
                 <div className="text-sm text-muted-foreground">{currentSession?.name}</div>
               </div>
               <Button
