@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from './db'
-import type { AttendanceStatus } from '@prisma/client'
+import type { AttendanceStatus } from '@/lib/db'
 
 export async function getStudents() {
   return prisma.student.findMany({

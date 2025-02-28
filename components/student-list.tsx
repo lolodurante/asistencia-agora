@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { createStudent, deleteStudent } from "@/lib/actions"
-import type { Student, Session, AttendanceRecord } from "@prisma/client"
+import type { Student, Session, AttendanceRecord } from "@/lib/db"
 
 interface StudentListProps {
   students: Student[]

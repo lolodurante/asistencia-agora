@@ -6,7 +6,7 @@ import AttendanceTable from '@/components/attendance-table'
 import StudentList from '@/components/student-list'
 import SettingsPanel from '@/components/settings-panel'
 import AttendanceExcel from '@/components/attendance-excel'
-import type { Student, Session, AttendanceRecord } from '@prisma/client'
+import type { Student, Session, AttendanceRecord } from '@/lib/db'
 
 interface Props {
   initialStudents: Student[]
