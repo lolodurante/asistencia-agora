@@ -8,23 +8,30 @@ import SettingsPanel from '@/components/settings-panel'
 import AttendanceExcel from '@/components/attendance-excel'
 import type { Student, Session, AttendanceRecord } from '@/lib/db'
 
+interface Settings {
+  id: string
+  totalSessions: number
+  firstPartSessions: number
+  attendanceThreshold: number
+}
+
 interface Props {
   initialStudents: Student[]
   initialSessions: Session[]
   initialAttendance: AttendanceRecord[]
+  settings: Settings
 }
 
 export default function ClientPage({
   initialStudents,
   initialSessions,
   initialAttendance,
+  settings,
 }: Props) {
   const [activeTab, setActiveTab] = useState('attendance')
   const [students, setStudents] = useState<Student[]>(initialStudents)
   const [sessions, setSessions] = useState<Session[]>(initialSessions)
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(initialAttendance)
-  const [totalSessions, setTotalSessions] = useState(14)
-  const [attendanceThreshold, setAttendanceThreshold] = useState(60)
 
   return (
     <main className="container mx-auto py-6">
@@ -45,7 +52,8 @@ export default function ClientPage({
             attendance={attendance}
             setAttendance={setAttendance}
             setSessions={setSessions}
-            totalSessions={totalSessions}
+            totalSessions={settings.totalSessions}
+            firstPartSessions={settings.firstPartSessions}
           />
         </TabsContent>
 
@@ -54,7 +62,7 @@ export default function ClientPage({
             students={students}
             sessions={sessions}
             attendance={attendance}
-            attendanceThreshold={attendanceThreshold}
+            attendanceThreshold={settings.attendanceThreshold}
           />
         </TabsContent>
 
@@ -64,17 +72,16 @@ export default function ClientPage({
             setStudents={setStudents}
             sessions={sessions}
             attendance={attendance}
-            totalSessions={totalSessions}
-            attendanceThreshold={attendanceThreshold}
+            totalSessions={settings.totalSessions}
+            attendanceThreshold={settings.attendanceThreshold}
           />
         </TabsContent>
 
         <TabsContent value="settings" className="mt-6">
           <SettingsPanel
-            totalSessions={totalSessions}
-            setTotalSessions={setTotalSessions}
-            attendanceThreshold={attendanceThreshold}
-            setAttendanceThreshold={setAttendanceThreshold}
+            totalSessions={settings.totalSessions}
+            firstPartSessions={settings.firstPartSessions}
+            attendanceThreshold={settings.attendanceThreshold}
           />
         </TabsContent>
       </Tabs>

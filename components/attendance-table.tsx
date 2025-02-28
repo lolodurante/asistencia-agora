@@ -29,6 +29,7 @@ interface AttendanceTableProps {
   setAttendance: React.Dispatch<React.SetStateAction<AttendanceRecord[]>>
   setSessions: React.Dispatch<React.SetStateAction<Session[]>>
   totalSessions: number
+  firstPartSessions: number
 }
 
 export default function AttendanceTable({
@@ -38,6 +39,7 @@ export default function AttendanceTable({
   setAttendance,
   setSessions,
   totalSessions,
+  firstPartSessions,
 }: AttendanceTableProps) {
   const [selectedSession, setSelectedSession] = useState<string | null>(null)
   const [newSessionName, setNewSessionName] = useState("")
@@ -52,7 +54,6 @@ export default function AttendanceTable({
       return { number: 1, part: 1 as const }
     }
 
-    const firstPartSessions = Math.ceil(totalSessions / 2)
     const currentCount = sessions.length
 
     if (currentCount < firstPartSessions) {
@@ -152,7 +153,7 @@ export default function AttendanceTable({
   }
 
   const getSessionLabel = (session: Session) => {
-    return `(Parte ${session.part}) - ${session.name || "Sin nombre"}`
+    return `Parte ${session.part} - ${session.name || "Sin nombre"}`
   }
 
   const selectedSessionData = selectedSession ? sessions.find((s) => s.id === selectedSession) : null

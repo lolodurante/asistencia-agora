@@ -53,3 +53,14 @@ model AttendanceRecord {
 
   @@unique([studentId, sessionId])
 }
+
+model Settings {
+  id                 String   @id @default(uuid())
+  totalSessions      Int      @default(14)
+  firstPartSessions  Int      @default(7)
+  attendanceThreshold Int     @default(60)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("settings")
+}

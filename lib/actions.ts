@@ -92,4 +92,42 @@ export async function deleteSession(id: string) {
     where: { id }
   })
   revalidatePath('/')
+}
+
+export async function getSettings() {
+  let settings = await prisma.settings.findFirst()
+  
+  if (!settings) {
+    // Create default settings if none exist
+    settings = await prisma.settings.create({
+      data: {
+        totalSessions: 14,
+        firstPartSessions: 7,
+        attendanceThreshold: 60
+      }
+    })
+  }
+  
+  return settings
+}
+
+export async function updateSettings(data: {
+  totalSessions: number
+  firstPartSessions: number
+  attendanceThreshold: number
+}) {
+  const settings = await prisma.settings.findFirst()
+  
+  if (settings) {
+    await prisma.settings.update({
+      where: { id: settings.id },
+      data
+    })
+  } else {
+    await prisma.settings.create({
+      data
+    })
+  }
+  
+  revalidatePath('/')
 } 

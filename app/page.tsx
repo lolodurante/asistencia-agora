@@ -1,12 +1,13 @@
 import { Suspense } from "react"
-import { getStudents, getSessions, getAttendance } from "@/lib/actions"
+import { getStudents, getSessions, getAttendance, getSettings } from "@/lib/actions"
 import ClientPage from "@/components/client-page"
 
 export default async function Home() {
-  const [students, sessions, attendance] = await Promise.all([
+  const [students, sessions, attendance, settings] = await Promise.all([
     getStudents(),
     getSessions(),
-    getAttendance()
+    getAttendance(),
+    getSettings()
   ])
 
   return (
@@ -15,6 +16,7 @@ export default async function Home() {
         initialStudents={students}
         initialSessions={sessions}
         initialAttendance={attendance}
+        settings={settings}
       />
     </Suspense>
   )
