@@ -37,7 +37,7 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
   const getStatusCell = (status: AttendanceRecord | undefined) => {
     if (!status) return <span className="text-muted-foreground">-</span>
 
-    const statusMap = {
+    const statusMap: Record<AttendanceStatus, { text: string; class: string }> = {
       PRESENT: { text: "Presente", class: "text-green-500" },
       ABSENT: { text: "Ausente", class: "text-red-500" },
       JUSTIFIED: { text: "Justificado", class: "text-yellow-500 cursor-pointer hover:underline" },
