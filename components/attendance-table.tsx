@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { createSession, updateAttendance } from "@/lib/actions"
-import { Student, Session, AttendanceRecord } from "@prisma/client"
+import { Student, Session, AttendanceRecord } from "@/lib/db"
 
 interface AttendanceTableProps {
   students: Student[]
