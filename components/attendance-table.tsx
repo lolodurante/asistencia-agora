@@ -152,7 +152,7 @@ export default function AttendanceTable({
   }
 
   const getSessionLabel = (session: Session) => {
-    return `Encuentro ${session.number} (Parte ${session.part}) - ${session.name || "Sin nombre"}`
+    return `(Parte ${session.part}) - ${session.name || "Sin nombre"}`
   }
 
   const selectedSessionData = selectedSession ? sessions.find((s) => s.id === selectedSession) : null
@@ -193,7 +193,7 @@ export default function AttendanceTable({
                 {selectedSessionData.part === 1 ? "Primera Parte" : "Segunda Parte"}
               </Badge>
               <h3 className="text-lg font-medium">
-                Encuentro {selectedSessionData.number} - {selectedSessionData.name}
+                Encuentro {selectedSessionData.name}
               </h3>
             </div>
           )}

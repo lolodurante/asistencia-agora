@@ -67,7 +67,7 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
     // Crear encabezados
     const headers = ["agorense"]
     sortedSessions.forEach((session) => {
-      headers.push(`Encuentro ${session.number}`)
+      
     })
 
     // Crear filas
