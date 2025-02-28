@@ -66,9 +66,7 @@ export default function AttendanceExcel({ students, sessions, attendance, attend
   const exportToCSV = () => {
     // Crear encabezados
     const headers = ["agorense"]
-    sortedSessions.forEach((session) => {
-      
-    })
+
 
     // Crear filas
     const rows = students.map((student) => {
