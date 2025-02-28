@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
-import type { Student, Session, AttendanceRecord, AttendanceStatus } from '@prisma/client'
+import type { Student, Session, AttendanceRecord, AttendanceStatus } from '@/lib/db'
 
 interface AttendanceExcelProps {
   students: Student[]
