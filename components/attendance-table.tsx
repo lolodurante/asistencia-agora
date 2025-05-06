@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Check, X, AlertCircle } from "lucide-react"
+import { Plus, Check, X, AlertCircle, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -19,7 +19,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { createSession, updateAttendance } from "@/lib/actions"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { createSession, updateAttendance, deleteSession } from "@/lib/actions"
 import { Student, Session, AttendanceRecord } from "@/lib/db"
 
 interface AttendanceTableProps {
@@ -47,6 +57,7 @@ export default function AttendanceTable({
   const [showJustificationDialog, setShowJustificationDialog] = useState(false)
   const [justificationText, setJustificationText] = useState("")
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   // Calculate the next session number and part
   const getNextSessionInfo = () => {
@@ -159,6 +170,27 @@ export default function AttendanceTable({
 
   const selectedSessionData = selectedSession ? sessions.find((s) => s.id === selectedSession) : null
 
+  const handleDeleteSession = async () => {
+    if (!selectedSession) return
+    
+    try {
+      await deleteSession(selectedSession)
+      
+      // Update local state by removing the deleted session
+      setSessions((prev) => prev.filter((session) => session.id !== selectedSession))
+      
+      // Remove related attendance records from state
+      setAttendance((prev) => prev.filter((record) => record.sessionId !== selectedSession))
+      
+      // Clear selection
+      setSelectedSession(null)
+      setShowDeleteDialog(false)
+    } catch (error) {
+      console.error("Error deleting session:", error)
+      alert("Error al eliminar el encuentro. Intente nuevamente.")
+    }
+  }
+
   return (
     <>
       <Card className="shadow-md">
@@ -191,12 +223,23 @@ export default function AttendanceTable({
 
           {selectedSessionData && (
             <div className="mb-4">
-              <Badge variant="outline" className="mb-2">
-                {selectedSessionData.part === 1 ? "Primera Parte" : "Segunda Parte"}
-              </Badge>
-              <h3 className="text-lg font-medium">
-                 {selectedSessionData.name}
-              </h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Badge variant="outline" className="mb-2">
+                    {selectedSessionData.part === 1 ? "Primera Parte" : "Segunda Parte"}
+                  </Badge>
+                  <h3 className="text-lg font-medium">
+                    {selectedSessionData.name}
+                  </h3>
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" /> Eliminar
+                </Button>
+              </div>
             </div>
           )}
 
@@ -326,6 +369,23 @@ export default function AttendanceTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar este encuentro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Se eliminará el encuentro y todos los registros de asistencia asociados a él.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSession} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

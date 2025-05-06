@@ -91,6 +91,12 @@ export async function deleteStudent(id: string) {
 }
 
 export async function deleteSession(id: string) {
+  // First, delete all attendance records for this session
+  await prisma.attendanceRecord.deleteMany({
+    where: { sessionId: id }
+  })
+  
+  // Then delete the session
   await prisma.session.delete({
     where: { id }
   })
