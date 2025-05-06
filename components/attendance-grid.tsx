@@ -59,7 +59,8 @@ export default function AttendanceGrid({ students, sessions, attendance, attenda
     const presentCount = partSessions.reduce((count, session) => {
       const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id)
 
-      return count + (record && (record.status === "present" || record.status === "justified") ? 1 : 0)
+      // Solo contar las asistencias marcadas como "present"
+      return count + (record && record.status === "present" ? 1 : 0)
     }, 0)
 
     return Math.round((presentCount / partSessions.length) * 100)

@@ -69,7 +69,7 @@ export default function StudentList({
     const presentCount = partSessions.reduce((count, session) => {
       const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id)
 
-      return count + (record && (record.status === "PRESENT" || record.status === "JUSTIFIED") ? 1 : 0)
+      return count + (record && record.status === "PRESENT" ? 1 : 0)
     }, 0)
 
     return Math.round((presentCount / partSessions.length) * 100)
