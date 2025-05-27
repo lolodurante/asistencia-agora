@@ -64,15 +64,24 @@ export default function StudentList({
 
   const calculateAttendancePercentage = (studentId: string, part: 1 | 2): number => {
     const partSessions = sessions.filter((session) => session.part === part)
-    if (partSessions.length === 0) return 0
 
+    let sessionsWithAnyRecordForStudent = 0
     const presentCount = partSessions.reduce((count, session) => {
       const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id)
-
-      return count + (record && record.status === "PRESENT" ? 1 : 0)
+      if (record) {
+        sessionsWithAnyRecordForStudent++
+        if (record.status === "PRESENT") {
+          return count + 1
+        }
+      }
+      return count
     }, 0)
 
-    return Math.round((presentCount / partSessions.length) * 100)
+    if (sessionsWithAnyRecordForStudent === 0) {
+      return 0
+    }
+
+    return Math.round((presentCount / sessionsWithAnyRecordForStudent) * 100)
   }
 
   const isAtRisk = (studentId: string): boolean => {

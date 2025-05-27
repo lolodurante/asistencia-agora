@@ -53,17 +53,25 @@ export default function AttendanceGrid({ students, sessions, attendance, attenda
   }
 
   const calculateAttendancePercentage = (studentId: string, part: 1 | 2): number => {
-    const partSessions = sessions.filter((session) => session.part === part)
-    if (partSessions.length === 0) return 0
+    const partSessions = sessions.filter((session) => session.part === part);
 
+    let sessionsWithAnyRecordForStudent = 0;
     const presentCount = partSessions.reduce((count, session) => {
-      const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id)
+      const record = attendance.find((r) => r.studentId === studentId && r.sessionId === session.id);
+      if (record) { // If there's any record for this student in this session
+        sessionsWithAnyRecordForStudent++;
+        if (record.status === "present") { // status is lowercase here
+          return count + 1;
+        }
+      }
+      return count;
+    }, 0);
 
-      // Solo contar las asistencias marcadas como "present"
-      return count + (record && record.status === "present" ? 1 : 0)
-    }, 0)
+    if (sessionsWithAnyRecordForStudent === 0) {
+      return 0; 
+    }
 
-    return Math.round((presentCount / partSessions.length) * 100)
+    return Math.round((presentCount / sessionsWithAnyRecordForStudent) * 100);
   }
 
   const getStatusBadge = (status: string | null) => {
